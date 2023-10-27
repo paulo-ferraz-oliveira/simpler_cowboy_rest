@@ -1,0 +1,26 @@
+$ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/kv/k
+404
+
+$ curl -s -o /dev/null -w '%{http_code}\n' -d 'v' -H 'Content-Type: application/json' http://127.0.0.1:8080/kv/k
+404
+
+$ curl -s -o /dev/null -w '%{http_code}\n' -d 'v' -H 'Content-Type: application/json' -X PUT http://127.0.0.1:8080/kv/k
+201
+
+$ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/kv/k  # v
+200
+
+$ curl -s -o /dev/null -w '%{http_code}\n' -d 'v2' -H 'Content-Type: application/json' http://127.0.0.1:8080/kv/k
+204
+
+$ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/kv/k  # v2
+200
+
+$ curl -s -o /dev/null -w '%{http_code}\n' -d 'v' -H 'Content-Type: application/json' -X PUT http://127.0.0.1:8080/kv/k
+400
+
+$ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/kv/k -X DELETE
+204
+
+$ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/kv/k
+404

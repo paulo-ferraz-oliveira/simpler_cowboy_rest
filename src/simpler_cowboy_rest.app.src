@@ -1,0 +1,13 @@
+{application, simpler_cowboy_rest, [
+    {applications, [
+        % OTP dependencies
+        kernel,
+        stdlib,
+        % External dependencies
+        cowboy
+    ]},
+    {description, "An example of a simpler cowboy_rest behaviour"},
+    {licenses, ["MIT"]},
+    {mod, {simpler_cowboy_rest_app, [{port, 8080}]}},
+    {vsn, semver}
+]}.
