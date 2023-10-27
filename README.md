@@ -1,4 +1,7 @@
-# `simpler_cowboy_rest`
+# `simpler_cowboy_rest` [![CI][ci-img]][ci]
+
+[ci]: https://github.com/paulo-ferraz-oliveira/simpler_cowboy_rest/actions
+[ci-img]: https://github.com/paulo-ferraz-oliveira/simpler_cowboy_rest/actions/workflows/ci.yml/badge.svg
 
 A simpler (and opinionated) `cowboy_rest` behaviour.
 

@@ -2,6 +2,7 @@
     {applications, [
         % OTP dependencies
         kernel,
+        sasl,
         stdlib,
         % External dependencies
         cowboy

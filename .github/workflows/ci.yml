@@ -1,0 +1,35 @@
+---
+name: CI
+
+"on": [push, workflow_dispatch]
+
+jobs:
+  ci:
+    name: CI
+
+    strategy:
+      fail-fast: false
+      matrix:
+        otp-version: ['26.1']
+        rebar3-version: ['3.22']
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp-version}}
+          rebar3-version: ${{matrix.rebar3-version}}
+
+      - run: rebar3 ci
+
+      - run: rebar3 fmt --check
+
+      - run: |
+          sudo apt-get -y update
+          sudo apt-get -y install shelltestrunner
+          rebar3 release
+          _build/default/rel/simpler_cowboy_rest/bin/simpler_cowboy_rest daemon
+          shelltest tests/example.test
