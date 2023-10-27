@@ -177,7 +177,8 @@ Declare your new generic behavior as:
 % cowboy_rest (and default fallbacks)
 
 init(default, Req, State) ->
-    ?M:module_info(), % Force module to be loaded
+    % Force module to be loaded
+    ?M:module_info(),
     {cowboy_rest, Req, State}.
 
 init(Req, State) ->
@@ -247,7 +248,8 @@ content_types_accepted(default, Req, State) ->
 content_types_accepted(Req, State) ->
     dispatch(?MFA, Req, State).
 
-delete(default, Req, State) -> % Exception to the rule: we want to rename this!
+% Exception to the rule: we want to rename this!
+delete(default, Req, State) ->
     {false, Req, State}.
 
 delete_resource(Req, State) ->
