@@ -9,19 +9,16 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        otp-version: ['26.1']
-        rebar3-version: ['3.22']
 
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.6
 
-      - uses: erlef/setup-beam@v1
+      - uses: erlef/setup-beam@v1.17.5
         with:
-          otp-version: ${{matrix.otp-version}}
-          rebar3-version: ${{matrix.rebar3-version}}
+          version-type: strict
+          version-file: .tool-versions
 
       - run: rebar3 ci
 
