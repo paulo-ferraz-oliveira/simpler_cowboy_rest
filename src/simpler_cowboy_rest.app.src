@@ -7,8 +7,9 @@
         % External dependencies
         cowboy
     ]},
-    {description, "An example of a simpler cowboy_rest behaviour"},
+    {description, "A simpler, opinionated, `cowboy_rest` application-behaviour"},
     {licenses, ["MIT"]},
-    {mod, {simpler_cowboy_rest_app, [{port, 8080}]}},
-    {vsn, semver}
+    {links, [{"GitHub", "https://github.com/paulo-ferraz-oliveira/simpler_cowboy_rest"}]},
+    {vsn, semver},
+    {env, [{shared_impl, undefined}]}
 ]}.

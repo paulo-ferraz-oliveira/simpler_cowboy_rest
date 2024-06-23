@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -34,6 +34,8 @@ jobs:
       - run: |
           sudo apt-get -y update
           sudo apt-get -y install shelltestrunner
+          pushd example
           rebar3 release
-          _build/default/rel/simpler_cowboy_rest/bin/simpler_cowboy_rest daemon
+          _build/default/rel/simpler_cowboy_rest_example/bin/simpler_cowboy_rest_example daemon
+          popd
           shelltest tests/example.test
