@@ -63,6 +63,11 @@ Declare your dispatch handlers (and start the server) with something like the fo
     {ok, _} = simpler_cowboy_rest:start(Routes, TransOpts).
 ```
 
+#### Logger metadata
+
+The application saves logger metadata key `simpler_cowboy_rest_dispatched_to` as an MFA
+tuple that can be recovered for tracing your logging entries.
+
 ## The project
 
 ### Changelog

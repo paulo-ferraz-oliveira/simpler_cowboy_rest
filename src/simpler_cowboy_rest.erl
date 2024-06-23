@@ -227,17 +227,19 @@ dispatch({M, F, A}, Req, State) ->
         true ->
             M:F(Req, State);
         false ->
-            SharedImpl = application:get_env(simpler_cowboy_rest, shared_impl, undefined),
-            dispatch_shared(SharedImpl, F, A, Req, State)
+            dispatch_shared(shared_impl(), F, A, Req, State)
     end.
 
-dispatch_shared(undefined = _SharedImpl, F, _A, Req, State) ->
+dispatch_shared(undefined = _SharedImpl, F, A, Req, State) ->
+    logger_set_process_metadata(?MODULE, F, A),
     ?MODULE:F(default, Req, State);
 dispatch_shared(SharedImpl, F, A, Req, State) ->
     case erlang:function_exported(SharedImpl, F, A) of
         true ->
+            logger_set_process_metadata(SharedImpl, F, A),
             SharedImpl:F(Req, State);
         false ->
+            logger_set_process_metadata(?MODULE, F, A),
             ?MODULE:F(default, Req, State)
     end.
 
@@ -249,6 +251,9 @@ expand_to_cowboy(Routes) ->
         [],
         Routes
     ).
+
+logger_set_process_metadata(M, F, A) ->
+    logger:set_process_metadata(#{simpler_cowboy_rest_dispatched_to => {M, F, A}}).
 
 shared_impl() ->
     application:get_env(simpler_cowboy_rest, shared_impl, undefined).

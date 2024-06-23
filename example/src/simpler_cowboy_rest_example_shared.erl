@@ -6,9 +6,9 @@
 -elvis([{elvis_style, no_debug_call, disable}]).
 
 service_available(Req, State) ->
-    io:format("Service is available! (output from shared)~n"),
+    logger:info("Service is available! (output from shared)"),
     {true, Req, State}.
 
 is_authorized(Req, State) ->
-    io:format("You're authorized! (output from shared)~n"),
+    logger:info("You're authorized! (output from shared)"),
     {true, Req, State}.
