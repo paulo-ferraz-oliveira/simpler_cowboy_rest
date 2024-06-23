@@ -110,8 +110,14 @@
 % cowboy_rest (and default fallbacks)
 
 init(default, Req, State) ->
-    % Force module to be loaded
+    % Force modules to be loaded
     ?M:module_info(),
+    case shared_impl() of
+        undefined ->
+            ok;
+        SharedImpl ->
+            SharedImpl:module_info()
+    end,
     {cowboy_rest, Req, State}.
 
 init(Req, State) ->
@@ -243,3 +249,6 @@ expand_to_cowboy(Routes) ->
         [],
         Routes
     ).
+
+shared_impl() ->
+    application:get_env(simpler_cowboy_rest, shared_impl, undefined).
