@@ -3,8 +3,6 @@
 -export([service_available/2]).
 -export([is_authorized/2]).
 
--elvis([{elvis_style, no_debug_call, disable}]).
-
 service_available(Req, State) ->
     logger:info("Service is available! (output from shared)"),
     {true, Req, State}.
