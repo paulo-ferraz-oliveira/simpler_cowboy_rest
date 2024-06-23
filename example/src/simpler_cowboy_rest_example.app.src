@@ -1,0 +1,9 @@
+{application, simpler_cowboy_rest_example, [
+    {applications, [
+        kernel,
+        stdlib,
+        simpler_cowboy_rest
+    ]},
+    {mod, {simpler_cowboy_rest_example_app, []}},
+    {vsn, semver}
+]}.

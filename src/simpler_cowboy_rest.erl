@@ -34,6 +34,10 @@
 -export([post/2]).
 -export([delete/2]).
 
+% dev API
+
+-export([start/2]).
+
 % spec'ed as per `cowboy_rest`'s current definition (2.10.0)
 
 -callback init(Req, State) -> {Result, Req, State} when
@@ -198,6 +202,18 @@ put(Req, State) ->
 delete(Req, State) ->
     ?M:?F(Req, State).
 
+% dev API
+
+start(Routes0, TransOpts) ->
+    Routes = expand_to_cowboy(Routes0),
+    DispatchRules = cowboy_router:compile([{'_', Routes}]),
+    ProtoOpts = #{
+        env => #{
+            dispatch => DispatchRules
+        }
+    },
+    cowboy:start_clear(simpler_cowboy_rest, TransOpts, ProtoOpts).
+
 % internal
 
 dispatch({M, F, A}, Req, State) ->
@@ -205,5 +221,25 @@ dispatch({M, F, A}, Req, State) ->
         true ->
             M:F(Req, State);
         false ->
+            SharedImpl = application:get_env(simpler_cowboy_rest, shared_impl, undefined),
+            dispatch_shared(SharedImpl, F, A, Req, State)
+    end.
+
+dispatch_shared(undefined = _SharedImpl, F, _A, Req, State) ->
+    ?MODULE:F(default, Req, State);
+dispatch_shared(SharedImpl, F, A, Req, State) ->
+    case erlang:function_exported(SharedImpl, F, A) of
+        true ->
+            SharedImpl:F(Req, State);
+        false ->
             ?MODULE:F(default, Req, State)
     end.
+
+expand_to_cowboy(Routes) ->
+    lists:foldl(
+        fun({Path, Opts} = _Route, AccIn) ->
+            AccIn ++ [{Path, simpler_cowboy_rest, Opts}]
+        end,
+        [],
+        Routes
+    ).
