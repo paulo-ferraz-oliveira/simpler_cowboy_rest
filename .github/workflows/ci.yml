@@ -29,6 +29,11 @@ jobs:
 
       - run: rebar3 ci
 
+      - run: |
+          pushd example
+          rebar3 ci
+          popd
+
       - run: rebar3 fmt --check
 
       - run: |
