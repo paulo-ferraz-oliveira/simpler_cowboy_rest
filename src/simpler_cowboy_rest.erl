@@ -17,26 +17,41 @@
 % default fallbacks
 
 -export([init/3]).
+-ignore_xref([init/3]).
 -export([service_available/3]).
+-ignore_xref([service_available/3]).
 -export([allowed_methods/3]).
+-ignore_xref([allowed_methods/3]).
 -export([is_authorized/3]).
+-ignore_xref([is_authorized/3]).
 -export([forbidden/3]).
+-ignore_xref([forbidden/3]).
 -export([content_types_provided/3]).
+-ignore_xref([content_types_provided/3]).
 -export([resource_exists/3]).
+-ignore_xref([resource_exists/3]).
 -export([allow_missing_post/3]).
+-ignore_xref([allow_missing_post/3]).
 -export([content_types_accepted/3]).
+-ignore_xref([content_types_accepted/3]).
 -export([delete/3]).
+-ignore_xref([delete/3]).
 
 % per route extensions
 
 -export([put/2]).
+-ignore_xref([put/2]).
 -export([get/2]).
+-ignore_xref([get/2]).
 -export([post/2]).
+-ignore_xref([post/2]).
 -export([delete/2]).
+-ignore_xref([delete/2]).
 
 % dev API
 
 -export([start/2]).
+-ignore_xref([start/2]).
 
 % spec'ed as per `cowboy_rest`'s current definition (2.10.0)
 
@@ -78,7 +93,7 @@
     Result :: true | {true, URI :: iodata()} | false | stop.
 
 -callback get(Req, State) -> {Result, Req, State} when
-    Result :: cowboy_req:resp_body() | stop.
+    Result :: json:encode_value() | stop.
 
 -callback post(Req, State) -> {Result, Req, State} when
     Result :: true | {true, URI :: iodata()} | false | stop.
@@ -200,7 +215,9 @@ post(Req, State) ->
     ?M:?F(Req, State).
 
 get(Req, State) ->
-    ?M:?F(Req, State).
+    {Result0, Req, State} = ?M:?F(Req, State),
+    Result = iolist_to_binary(json:encode(Result0)),
+    {Result, Req, State}.
 
 put(Req, State) ->
     ?M:?F(Req, State).

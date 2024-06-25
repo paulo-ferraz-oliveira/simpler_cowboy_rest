@@ -27,11 +27,22 @@ jobs:
           version-type: strict
           version-file: .tool-versions
 
-      - run: rebar3 ci
+      - name: top-level CI
+        run: |
+          rebar3 ci
 
-      - run: rebar3 fmt --check
+      - name: example-level CI
+        run: |
+          pushd example
+          rebar3 ci
+          popd
 
-      - run: |
+      - name: check formatting
+        run: |
+          rebar3 fmt --check
+
+      - name: test the example release
+        run: |
           sudo apt-get -y update
           sudo apt-get -y install shelltestrunner
           pushd example

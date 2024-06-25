@@ -38,4 +38,4 @@ body(Req) ->
 
 ets_lookup(K) ->
     [{_, V}] = ets:lookup(simpler_cowboy_rest_example, K),
-    V.
+    #{<<"result">> => V}.

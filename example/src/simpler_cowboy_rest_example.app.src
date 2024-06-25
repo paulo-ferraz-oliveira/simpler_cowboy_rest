@@ -4,6 +4,7 @@
         stdlib,
         simpler_cowboy_rest
     ]},
+    {description, "A `simpler_cowboy_rest` showcase"},
     {mod, {simpler_cowboy_rest_example_app, []}},
     {vsn, semver}
 ]}.
