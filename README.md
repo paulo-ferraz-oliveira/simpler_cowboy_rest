@@ -28,6 +28,10 @@ It also sprinkles some opinions, like having verbs visible in the route metadata
 considering `application/json` the default data exchange "protocol", and naming
 verbs as methods, like `put`, and `delete` (it even "gets rid" of `delete_resource/2`).
 
+Mind you that because of the JSON "constraint", we expect not stuff like
+`cowboy_req:resp_body()` but a `json:encode_value()` since we're going to encode inside the
+application.
+
 ### Details/opinions/caveats
 
 "`% per route extensions`" assumes each of your handlers handles unique

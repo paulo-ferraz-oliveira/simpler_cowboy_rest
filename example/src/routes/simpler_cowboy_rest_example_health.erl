@@ -4,4 +4,4 @@
 -export([get/2]).
 
 get(Req, State) ->
-    {"I'm Ok, thanks", Req, State}.
+    {#{<<"result">> => <<"I'm Ok, thanks">>}, Req, State}.
