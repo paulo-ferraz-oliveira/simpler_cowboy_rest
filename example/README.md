@@ -6,8 +6,8 @@ capabilities.
 
 To run it, you need to create a release: e.g. `rebar3 release`.
 
-Then start it: e.g.
+Then start it, e.g.
 `_build/default/rel/simpler_cowboy_rest_example/bin/simpler_cowboy_rest_example daemon`.
 
-If no errors were show, the application should now be served the application in `localhost:8080`.
-Check `http://localhost:8080/health`, for example.
+If no errors are shown, the application should now be served at port `8080`.
+Check <http://localhost:8080/health>, for example.
