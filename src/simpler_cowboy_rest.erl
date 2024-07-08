@@ -50,8 +50,10 @@
 
 % dev API
 
--export([start/2]).
--ignore_xref([start/2]).
+-export([start/4]).
+-ignore_xref([start/4]).
+-export([stop/0]).
+-ignore_xref([stop/0]).
 
 % spec'ed as per `cowboy_rest`'s current definition (2.10.0)
 
@@ -227,15 +229,24 @@ delete(Req, State) ->
 
 % dev API
 
-start(Routes0, TransOpts) ->
+start(ClearOrTls, Routes0, TransOpts, ProtoOpts0) ->
     Routes = expand_to_cowboy(Routes0),
     DispatchRules = cowboy_router:compile([{'_', Routes}]),
-    ProtoOpts = #{
-        env => #{
+    Env = maps:get(env, ProtoOpts0),
+    ProtoOpts = maps:merge(ProtoOpts0, #{
+        env => maps:merge(Env, #{
             dispatch => DispatchRules
-        }
-    },
-    cowboy:start_clear(simpler_cowboy_rest, TransOpts, ProtoOpts).
+        })
+    }),
+    cowboy_start(ClearOrTls, TransOpts, ProtoOpts).
+
+stop() ->
+    cowboy:stop_listener(simpler_cowboy_rest).
+
+cowboy_start(clear = _ClearOrTls, TransOpts, ProtoOpts) ->
+    cowboy:start_clear(simpler_cowboy_rest, TransOpts, ProtoOpts);
+cowboy_start(tls = _ClearOrTls, TransOpts, ProtoOpts) ->
+    cowboy:start_tls(simpler_cowboy_rest, TransOpts, ProtoOpts).
 
 % internal
 
@@ -262,8 +273,10 @@ dispatch_shared(SharedImpl, F, A, Req, State) ->
 
 expand_to_cowboy(Routes) ->
     lists:foldl(
-        fun({Path, Opts} = _Route, AccIn) ->
-            AccIn ++ [{Path, simpler_cowboy_rest, Opts}]
+        fun({Path, Opts0} = _Route, AccIn) ->
+            Constraints = maps:get(with_constraints, Opts0),
+            Opts = maps:remove(with_constraints, Opts0),
+            AccIn ++ [{Path, Constraints, simpler_cowboy_rest, Opts}]
         end,
         [],
         Routes
