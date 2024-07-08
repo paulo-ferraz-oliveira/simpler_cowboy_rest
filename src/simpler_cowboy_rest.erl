@@ -232,7 +232,7 @@ delete(Req, State) ->
 start(ClearOrTls, Routes0, TransOpts, ProtoOpts0) ->
     Routes = expand_to_cowboy(Routes0),
     DispatchRules = cowboy_router:compile([{'_', Routes}]),
-    Env = maps:get(env, ProtoOpts0),
+    Env = maps:get(env, ProtoOpts0, #{}),
     ProtoOpts = maps:merge(ProtoOpts0, #{
         env => maps:merge(Env, #{
             dispatch => DispatchRules
@@ -274,13 +274,37 @@ dispatch_shared(SharedImpl, F, A, Req, State) ->
 expand_to_cowboy(Routes) ->
     lists:foldl(
         fun({Path, Opts0} = _Route, AccIn) ->
-            Constraints = maps:get(with_constraints, Opts0),
+            BaseConstraints = maps:get(with_constraints, Opts0, []),
+            Mod = maps:get(are_dispatched_to, Opts0),
+            Constraints = massage_constraints([], BaseConstraints, Mod),
             Opts = maps:remove(with_constraints, Opts0),
             AccIn ++ [{Path, Constraints, simpler_cowboy_rest, Opts}]
         end,
         [],
         Routes
     ).
+
+massage_constraints(Acc, [], _Mod) ->
+    Acc;
+massage_constraints(Acc, [{K, Constraints} | Rest], Mod) ->
+    CowboyConstraints = to_cowboy_constraints(Constraints, Mod),
+    massage_constraints(Acc ++ [{K, CowboyConstraints}], Rest, Mod).
+
+to_cowboy_constraints(Constraints, Mod) when is_atom(Constraints) ->
+    to_cowboy_constraints([Constraints], Mod);
+to_cowboy_constraints(Constraints, Mod) ->
+    lists:foldl(
+        fun(Constraint, Acc) ->
+            Acc ++ [massaged_constraint(Constraint, Mod)]
+        end,
+        [],
+        Constraints
+    ).
+
+massaged_constraint(Constraint, Mod) when is_atom(Constraint) ->
+    fun Mod:Constraint/2;
+massaged_constraint(Constraint, _Mod) ->
+    Constraint.
 
 logger_set_process_metadata(M, F, A) ->
     logger:set_process_metadata(#{simpler_cowboy_rest_dispatched_to => {M, F, A}}).
