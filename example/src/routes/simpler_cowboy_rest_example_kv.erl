@@ -9,6 +9,9 @@
 -export([post/2]).
 -export([delete/2]).
 
+-export([restrict_k/2]).
+-ignore_xref([restrict_k/2]).
+
 resource_exists(Req, State) ->
     {[] =/= ets:lookup(simpler_cowboy_rest_example, k(Req)), Req, State}.
 
@@ -26,6 +29,17 @@ post(Req, State) ->
 
 delete(Req, State) ->
     {ets:delete(simpler_cowboy_rest_example, k(Req)), Req, State}.
+
+% constraints
+
+restrict_k(forward, Value) ->
+    Regex = <<"^k.*">>,
+    case re:run(Value, Regex) of
+        nomatch ->
+            {error, nomatch};
+        _ ->
+            {ok, Value}
+    end.
 
 % internal
 
