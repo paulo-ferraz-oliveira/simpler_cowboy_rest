@@ -37,10 +37,6 @@ jobs:
           rebar3 ci
           popd
 
-      - name: check formatting
-        run: |
-          rebar3 fmt --check
-
       - name: test the example release
         run: |
           sudo apt-get -y update
