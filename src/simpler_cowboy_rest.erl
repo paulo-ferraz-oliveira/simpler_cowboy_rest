@@ -3,6 +3,8 @@
 
 % cowboy_rest
 
+-hank([{unused_callbacks, [all]}]).
+
 -export([init/2]).
 -export([service_available/2]).
 -export([allowed_methods/2]).
